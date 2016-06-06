@@ -1,0 +1,84 @@
+---
+title: "Statistical_Inference_-_ToohGrowth Analysis"
+author: "Joel Calixto"
+date: "5 de junio de 2016"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Statistical Inference - Toohgrowth analysis
+
+In this project correspond analysis of tooth growth influencied by supplement type and dose
+
+# Point 1 
+Load the ToothGrowth data and perform some basic exploratory data analyses
+
+```{r load}
+#load plot package
+library(ggplot2)
+#take a datasets of example 
+data("ToothGrowth")
+
+#check type of type and variables
+str(ToothGrowth)
+
+#show a previous of data
+head(ToothGrowth)
+
+#show a plot of data for explore data
+ggplot(data=ToothGrowth, aes(x=dose, y=len, fill=supp)) + geom_bar(stat="identity",) + facet_grid(. ~ supp) + xlab("Dose in mgs") + ylab("Tooth") + guides(fill=guide_legend(title="Supplement type"))
+
+#check len of tooth by dose
+ggplot(aes(x=supp, y=len), data=ToothGrowth) + geom_boxplot(aes(fill=supp)) + xlab("Supplement") + ylab("Tooth Length") + facet_grid(~ dose) + ggtitle("Tooth Length /Dose") + 
+     theme(plot.title = element_text(lineheight=.2))
+
+#check len of tooth by supplement type
+ggplot(aes(x=supp, y=len), data=ToothGrowth) + geom_boxplot(aes(fill=supp)) + xlab("Type of Supplement") + ylab("Tooth height") + guides(fill=guide_legend(title="Supplement type"))
+
+```
+
+# Point 2
+Provide a basic summary of the data.
+
+```{r summary}
+#display a summary of data 
+summary(ToothGrowth)
+```
+
+# Point 3
+Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+
+We can see that p-value is more great than 0.05 =0.06063 and confidence intervals contains zero, then can not reject NULL hypothesis
+```{r analysis}
+
+#compare tooth growth grouping by supplement
+t.test(len~supp,data=ToothGrowth)
+```
+
+In next combination of dose we can see that p-value is 1.268e-07,  4.398e-14, 1.906e-05 respectively
+and confidence invervals do not contains 0 from this way we can reject NULL hypothesis
+
+```{r analysis combination}
+# generate a var of group combination
+doses_com1 <- subset (ToothGrowth, dose %in% c(0.5, 1.0)) 
+doses_com2 <- subset (ToothGrowth, dose %in% c(0.5, 2.0)) 
+doses_com3 <- subset (ToothGrowth, dose %in% c(1.0, 2.0)) 
+
+# Check for combination 0.5 and 1.0 mg
+t.test(len ~ dose, data = doses_com1)
+# Check for combination 0.5 and 2.0 mg
+t.test(len ~ dose, data = doses_com2)
+# Check for combination 1.0 and 2.0 mg
+t.test(len ~ dose, data = doses_com3)
+```
+
+#Point 4
+State your conclusions and the assumptions needed for your conclusions. 
+
+With the results above we can conclude
+1.- Type of supplement does NOT affect in grow of tooth
+2.- Dose of supplement YES can influence grow the tooth
+
